@@ -1,0 +1,41 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.upstash/redis-mcp",
+  "description": "Run Redis commands and look up Upstash Redis Search docs against Upstash Redis over HTTP or TCP.",
+  "repository": {
+    "url": "https://github.com/upstash/redis-mcp",
+    "source": "github"
+  },
+  "version": "0.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@upstash/redis-mcp",
+      "version": "0.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "UPSTASH_REDIS_REST_URL",
+          "description": "Upstash Redis REST URL (HTTP transport).",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "UPSTASH_REDIS_REST_TOKEN",
+          "description": "Upstash Redis REST token (HTTP transport).",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "UPSTASH_REDIS_TCP_URL",
+          "description": "Upstash Redis rediss:// connection string (TCP transport).",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

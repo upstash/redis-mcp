@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2021"],
+    "module": "esnext",
+    "target": "ES2021",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "strict": true,
+    "downlevelIteration": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "types": ["bun", "node"]
+  },
+  "include": ["src"]
+}

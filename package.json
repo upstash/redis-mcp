@@ -1,0 +1,73 @@
+{
+  "version": "0.0.0",
+  "name": "@upstash/redis-mcp",
+  "mcpName": "io.github.upstash/redis-mcp",
+  "description": "MCP server for Upstash Redis — run Redis commands and look up Upstash Redis Search docs over HTTP or TCP",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "redis-mcp": "dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/upstash/redis-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/upstash/redis-mcp/issues"
+  },
+  "homepage": "https://github.com/upstash/redis-mcp#readme",
+  "keywords": [
+    "upstash",
+    "redis",
+    "mcp",
+    "model-context-protocol",
+    "redis-search"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup && bun -e \"require('fs').chmodSync('dist/index.js', '755')\"",
+    "watch": "bun run build && tsup --watch",
+    "fmt": "prettier --write .",
+    "test": "bun test",
+    "lint": "eslint \"**/*.{js,ts,tsx}\" --quiet --fix && tsc --noEmit",
+    "prepare": "husky"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.10.0",
+    "@types/bun": "^1.3.9",
+    "@types/node": "^18.19.0",
+    "@typescript-eslint/eslint-plugin": "8.4.0",
+    "@typescript-eslint/parser": "8.4.0",
+    "eslint": "9.10.0",
+    "eslint-plugin-unicorn": "55.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.3.2",
+    "prettier": "^3.6.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.6.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "prettier --write",
+      "eslint --quiet --fix"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.5",
+    "@redis/client": "^5.0.0",
+    "commander": "^14.0.0",
+    "dotenv": "^16.6.1",
+    "zod": "^3.25.76"
+  }
+}

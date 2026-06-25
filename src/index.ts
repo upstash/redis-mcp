@@ -17,7 +17,11 @@ function envBool(value: string | undefined): boolean {
 
 // Pull database-definition flags (--database / --rest-url / --rest-token / --url)
 // out of argv first; hand the rest to commander.
-const { databases: cliDatabases, rest } = parseDatabaseArgs(process.argv.slice(2));
+const {
+  databases: cliDatabases,
+  issues: cliIssues,
+  rest,
+} = parseDatabaseArgs(process.argv.slice(2));
 
 const program = new Command()
   .option("--transport <stdio|http>", "server transport", "stdio")
@@ -55,9 +59,24 @@ config.disableTelemetry =
   (opts.disableTelemetry ?? false) || envBool(process.env.UPSTASH_DISABLE_TELEMETRY);
 
 // Merge databases: environment first, CLI definitions override by name.
-const databases = new Map<string, DatabaseConfig>(parseDatabasesFromEnv(process.env));
+const envParsed = parseDatabasesFromEnv(process.env);
+const databases = new Map<string, DatabaseConfig>(envParsed.databases);
 for (const [name, db] of cliDatabases) databases.set(name, db);
 config.databases = databases;
+
+// Keep only issues for databases that didn't end up successfully configured
+// (a valid CLI definition can supersede a broken env one of the same name).
+config.configIssues = [...envParsed.issues, ...cliIssues].filter((i) => !databases.has(i.name));
+
+// A misconfigured database does not crash the server: the diagnostics ride out
+// in the tool-call error (the agent never sees stderr). Still echo to stderr so
+// a human reading the MCP host logs can see what's wrong.
+if (config.configIssues.length > 0) {
+  console.error(
+    "Upstash Redis MCP: some databases are misconfigured and were skipped:\n" +
+      config.configIssues.map((i) => `  - ${i.message}`).join("\n")
+  );
+}
 
 if (databases.size === 0) {
   console.error(

@@ -8,6 +8,21 @@ type RestReply = { result: unknown } | { error: string };
 
 const MAX_RETRIES = 2;
 
+// A bad URL/scheme throws a TypeError that retrying will never fix. The wording
+// differs across runtimes and the real reason is sometimes only in `cause`:
+//   Node: "Failed to parse URL from x"; "fetch failed" (cause: "unknown scheme")
+//   Bun:  "fetch() URL is invalid"; "protocol must be http:, https: or s3:"
+// Transient network failures ("fetch failed" / ECONN* / ENOTFOUND) are also
+// TypeErrors but must still retry, so we match only the permanent wordings.
+const NON_RETRYABLE = /parse url|invalid url|url is invalid|protocol must be|unknown scheme/i;
+
+export function isNonRetryable(error: unknown): boolean {
+  if (!(error instanceof TypeError)) return false;
+  const cause = error.cause;
+  const causeText = cause instanceof Error ? cause.message : typeof cause === "string" ? cause : "";
+  return NON_RETRYABLE.test(`${error.message} ${causeText}`);
+}
+
 async function fetchWithRetry(url: string, init: RequestInit): Promise<Response> {
   let lastError: unknown;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -20,6 +35,7 @@ async function fetchWithRetry(url: string, init: RequestInit): Promise<Response>
       }
       return res;
     } catch (error) {
+      if (isNonRetryable(error)) throw error;
       lastError = error;
       if (attempt < MAX_RETRIES) {
         await delay(attempt);

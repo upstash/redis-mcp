@@ -2,15 +2,11 @@
 
 # Upstash Redis MCP
 
-[![Add to Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=upstash-redis&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkB1cHN0YXNoL3JlZGlzLW1jcCJdfQ==)
-
-<br />
-
-<img src="https://github.com/user-attachments/assets/318cdf99-2e6c-4307-879e-f831c8fe3983" alt="An agent using the Upstash Redis MCP from the terminal" width="760" />
-
 </div>
 
----
+[![Add to Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=upstash-redis&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkB1cHN0YXNoL3JlZGlzLW1jcCJdfQ==)
+
+
 
 Lightweight MCP server for Redis with only two tools:
 

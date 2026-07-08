@@ -6,8 +6,6 @@
 
 [![Add to Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=upstash-redis&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkB1cHN0YXNoL3JlZGlzLW1jcCJdfQ==)
 
-
-
 Lightweight MCP server for Redis with only two tools:
 
 - 🧪 **`redis_run_commands`**: run one or more Redis commands over **HTTP/REST** or **TCP**, as a pipeline or an atomic transaction.
@@ -192,6 +190,19 @@ npx -y @upstash/redis-mcp \
 ## 📡 Telemetry
 
 HTTP/REST requests carry `Upstash-Telemetry-{Sdk,Platform,Runtime}` headers. Disable with `--disable-telemetry` or `UPSTASH_DISABLE_TELEMETRY=true`.
+
+## 🏃 Run it locally
+
+```bash
+bun install
+bun run build                 # emits dist/index.js
+cp .env.example .env          # add UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN
+
+node dist/index.js                          # stdio (what clients spawn)
+node dist/index.js --transport http --port 3000   # HTTP: endpoint /mcp, health /ping
+```
+
+The server auto-loads `.env`. To point a client at your local build, swap `npx -y @upstash/redis-mcp` in any [Quickstart](#-quickstart) config for `node /absolute/path/to/redis-mcp/dist/index.js`.
 
 ## 🛠️ Development
 

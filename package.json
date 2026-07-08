@@ -1,5 +1,5 @@
 {
-  "version": "0.0.0",
+  "version": "0.1.0",
   "name": "@upstash/redis-mcp",
   "mcpName": "io.github.upstash/redis-mcp",
   "description": "MCP server for Upstash Redis — run Redis commands and look up Upstash Redis Search docs over HTTP or TCP",

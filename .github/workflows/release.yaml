@@ -31,11 +31,6 @@ jobs:
         with:
           bun-version: latest
 
-      # Trusted publishing (OIDC) requires npm >= 11.5.1; older npm silently
-      # falls back to token auth, which would fail since we publish without one.
-      - name: Ensure npm supports trusted publishing
-        run: npm install -g npm@latest
-
       - name: Set package version
         run: |
           echo $(jq --arg v "${{ env.VERSION }}" '(.version) = $v' package.json) > package.json

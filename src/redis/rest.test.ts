@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { isNonRetryable } from "./rest";
+import { isNonRetryable, restEndpoint } from "./rest";
 
 describe("isNonRetryable", () => {
   // Permanent URL/scheme errors — wording differs across Node and Bun, and the
@@ -33,4 +33,23 @@ describe("isNonRetryable", () => {
   for (const [name, error] of transient) {
     test(`retryable: ${name}`, () => expect(isNonRetryable(error)).toBe(false));
   }
+});
+
+describe("restEndpoint", () => {
+  test("targets the origin for a single command", () => {
+    expect(restEndpoint("https://db.upstash.io", "/")).toBe("https://db.upstash.io/");
+  });
+  test("appends the pipeline and transaction paths", () => {
+    expect(restEndpoint("https://db.upstash.io", "/pipeline")).toBe(
+      "https://db.upstash.io/pipeline"
+    );
+    expect(restEndpoint("http://localhost:8080/", "/multi-exec")).toBe(
+      "http://localhost:8080/multi-exec"
+    );
+  });
+  test("never keeps a path, query or fragment from the configured URL", () => {
+    expect(restEndpoint("https://db.upstash.io/del/users?x=1#f", "/")).toBe(
+      "https://db.upstash.io/"
+    );
+  });
 });

@@ -56,6 +56,15 @@ function normalize(command: string[], reply: RestReply): CommandResult {
 }
 
 /**
+ * Build the request URL from the database origin and one of our own paths. An
+ * absolute path replaces whatever path the configured URL carries, so the
+ * request can only ever target "/", "/pipeline" or "/multi-exec".
+ */
+export function restEndpoint(restUrl: string, path: string): string {
+  return new URL(path, restUrl).toString();
+}
+
+/**
  * Execute commands over the Upstash REST API.
  * - single command (non-transaction): POST to the base URL
  * - multiple commands: POST to /pipeline (independent) or /multi-exec (atomic)
@@ -65,14 +74,13 @@ export async function runHttp(
   commands: string[][],
   transaction: boolean
 ): Promise<CommandResult[]> {
-  const base = (db.restUrl ?? "").replace(/\/+$/, "");
   const single = commands.length === 1 && !transaction;
-  const path = single ? "" : transaction ? "/multi-exec" : "/pipeline";
+  const path = single ? "/" : transaction ? "/multi-exec" : "/pipeline";
   const body = single ? commands[0] : commands;
 
-  log(`> REST ${db.name} ${path || "(single)"} x${commands.length}`);
+  log(`> REST ${db.name} ${single ? "(single)" : path} x${commands.length}`);
 
-  const res = await fetchWithRetry(base + path, {
+  const res = await fetchWithRetry(restEndpoint(db.restUrl ?? "", path), {
     method: "POST",
     body: JSON.stringify(body),
     headers: {

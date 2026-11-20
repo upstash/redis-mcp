@@ -179,6 +179,24 @@ describe("normalizeRestUrl", () => {
   test("rejects a protocol-relative URL", () => {
     expect(normalizeRestUrl("//db.upstash.io").ok).toBe(false);
   });
+  test("accepts a trailing slash and returns the origin", () => {
+    expect(normalizeRestUrl("https://db.upstash.io/")).toEqual({
+      ok: true,
+      value: "https://db.upstash.io",
+    });
+  });
+  for (const [name, url] of [
+    ["a command path", "https://db.upstash.io/del/users"],
+    ["a script path", "https://db.upstash.io/eval/return%201/0"],
+    ["a query", "https://db.upstash.io?x=1"],
+    ["a fragment", "https://db.upstash.io#frag"],
+  ]) {
+    test(`rejects ${name} without echoing it`, () => {
+      const r = normalizeRestUrl(url);
+      expect(r.ok).toBe(false);
+      expect(r.ok ? "" : r.message).not.toContain("upstash.io");
+    });
+  }
 });
 
 describe("normalizeConnString", () => {
@@ -206,6 +224,13 @@ describe("resolveDatabase", () => {
       restUrl: "https://raw.upstash.io",
       restToken: "rtok",
     });
+  });
+
+  test("raw HTTP url with a path is rejected", () => {
+    withDatabases([]);
+    expect(() =>
+      resolveDatabase({ rest_url: "https://raw.upstash.io/del/users", rest_token: "rtok" })
+    ).toThrow(/no path/);
   });
 
   test("raw HTTP url without scheme is normalized", () => {

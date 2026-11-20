@@ -78,7 +78,8 @@ type Normalized = { ok: true; value: string } | { ok: false; message: string };
 
 /**
  * Normalize a REST URL: trim, default the scheme to https:// when missing
- * (a common copy-paste slip), and reject anything that isn't http(s). Error
+ * (a common copy-paste slip), reject anything that isn't http(s), and reduce it
+ * to its origin (a path, query or fragment is rejected). Error
  * messages never echo the raw input — a misplaced connection string would leak
  * its password into the (agent-visible) tool result — so they describe only the
  * non-secret parts (scheme/host).
@@ -111,7 +112,17 @@ export function normalizeRestUrl(raw: string): Normalized {
         "REST URL must not embed credentials (user:pass@host) — provide the token separately via rest_token / UPSTASH_REDIS_*_REST_TOKEN.",
     };
   }
-  return { ok: true, value };
+  // The REST API also accepts a command in the URL path (POST /set/foo/bar), and
+  // only the request body goes through the read-only check. Keep the URL to its
+  // origin so the body is the only place a command can come from.
+  if (parsed.pathname !== "/" || parsed.search || parsed.hash) {
+    return {
+      ok: false,
+      message:
+        "REST URL must be only the database endpoint (https://<host>), with no path, query or fragment.",
+    };
+  }
+  return { ok: true, value: parsed.origin };
 }
 
 /**

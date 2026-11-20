@@ -175,7 +175,7 @@ npx -y @upstash/redis-mcp \
 ```
 
 > [!NOTE]
-> **Raw credentials per call.** A `redis_run_commands` call may also pass `rest_url` + `rest_token` (HTTP) or `connection_string` (TCP) inline; these override the registry and work even with no configured database. They flow through the model's context, so prefer env/CLI for anything sensitive.
+> **Raw credentials per call.** A `redis_run_commands` call may also pass `rest_url` + `rest_token` (HTTP) or `connection_string` (TCP) inline; these override the registry and work even with no configured database. They flow through the model's context, so prefer env/CLI for anything sensitive. A REST URL is the database endpoint only (`https://<your-db>.upstash.io`): a path, query or fragment is rejected, whether it comes from a call, an environment variable or a flag.
 
 ### Flags & options
 
